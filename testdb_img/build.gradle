@@ -1,0 +1,112 @@
+
+
+
+
+/*
+task buildImage(type:Exec, dependsOn: copyJar) {
+	def githash = getCheckedOutGitCommitHash()
+	def buildident = getTravisBuildNumber()
+	def build_timestamp = getTimestamp()
+
+
+ 	workingDir "$projectDir/img_build"
+ 	commandLine 'docker', 'build',
+				'--no-cache', '--force-rm',
+				'-t', "sogis/indexupdater:$buildident",
+				'--label', "indexupdater.created=$build_timestamp",
+				'--label', "indexupdater.git_commit=$githash",
+				'--label', "indexupdater.travis_build=$buildident",
+				'-f', 'Dockerfile',  '.'
+}
+
+
+task tagImage(type:Exec, dependsOn: buildImage) {
+	def buildident = getTravisBuildNumber()
+
+ 	commandLine 'docker', 'tag',
+				"sogis/indexupdater:$buildident",
+				"sogis/indexupdater:latest"
+}
+
+task stopContainer(type:Exec) {
+ 	commandLine 'docker', 'rm', '-f', 'indexupdater'
+ 	ignoreExitValue true
+}
+
+task runImage(type:Exec){
+ 	workingDir "$projectDir/img_build"
+ 	commandLine './run_image.sh', 'bg'
+
+ 	dependsOn stopContainer
+ 	dependsOn tagImage
+ 	dependsOn startEnv
+
+ 	doLast {
+        sleep(10000)
+    }
+}
+
+task intTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.intTest.runtimeClasspath
+    shouldRunAfter test
+
+    mustRunAfter runImage
+}
+
+task testImage(){
+	dependsOn runImage
+	dependsOn intTest
+}
+*/
+
+/*
+$td:
+- ili2pg für SO_Geo.ili auf der Kommandozeile ausführen, mit Angabe des Modelles (da nicht in geo.so.ch/models)
+- In build.gradle integrieren (task geoDDL)
+- Erweiteren mit den weiteren Modellen, Image-Brennen, etc.
+*/
+
+def postGisImage = '11-2.5-alpine'
+def ili2pg_JarFilePath = '~/tools/ili2pg-4.3.1/ili2pg-4.3.1.jar'
+
+task iliDDL(dependsOn:geoDDL){
+}
+
+task runDDL_SinkDB(type:Exec, dependsOn:delIliDDL){
+    commandLine 'docker', 'run', postGisImage,
+    ignoreExitValue true
+
+    doLast {
+        sleep(5000)
+    }
+}
+
+task delIliDDL(type:Exec, dependsOn:runDDL_SinkDB){
+    commandLine 'rm', '*.sql'
+}
+
+task geoDDL(type:Exec, dependsOn:delIliDDL){
+    commandLine ''
+}
+
+String getTravisBuildNumber() {
+	String val = System.getenv('TRAVIS_BUILD_NUMBER')
+
+	if(val == null)
+		val = 'localbuild'
+
+	return val
+}
+
+def getCheckedOutGitCommitHash() {
+  'git log -1 --pretty=%H'.execute().text.trim()
+}
+
+def getTimestamp() {
+    def date = new Date()
+    return date.format('yyyy-MM-dd HH:mm:ss')
+}
