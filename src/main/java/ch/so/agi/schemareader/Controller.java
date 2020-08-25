@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ch.so.agi.schemareader.config.DbConfig;
+import ch.so.agi.schemareader.config.DbConfig.Datasource;
 import ch.so.agi.schemareader.dbclients.DbClientMap;
 import ch.so.agi.schemareader.model.tableinfo.TableInfo;
 import ch.so.agi.schemareader.model.tablelisting.TableShortInfo;
@@ -17,10 +19,6 @@ import ch.so.agi.schemareader.model.tablelisting.TableShortInfo;
 @RestController
 public class Controller {
 	
-	@Autowired
-	DbClientMap dbClients;
-	
-
     @RequestMapping("/{db}/{schema}/{table}")
     public TableInfo queryTableInfo(){
     	
@@ -34,10 +32,8 @@ public class Controller {
     public List<TableShortInfo> listMatchingTables(
 	    		@RequestParam(name = "schema", required = false) String schemaNameFragment,
 	    		@RequestParam(name = "table") String tableNameFragment
-    		){
-    	
-    	JdbcTemplate temp = dbClients.getClient("pub");
-    	
+    		){    	
+   	
     	TableShortInfo tsi = new TableShortInfo();
     	tsi.initWithDummies();
     	
