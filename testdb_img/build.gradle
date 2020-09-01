@@ -70,14 +70,17 @@ $td:
 - Erweiteren mit den weiteren Modellen, Image-Brennen, etc.
 */
 
-def postGisImage = '11-2.5-alpine'
+def postGisImage = 'postgis/postgis:11-2.5-alpine'
 def ili2pg_JarFilePath = '~/tools/ili2pg-4.3.1/ili2pg-4.3.1.jar'
 
+/*
 task iliDDL(dependsOn:geoDDL){
 }
+*/
+//jdbc:postgresql://localhost:5432/postgres
 
-task runDDL_SinkDB(type:Exec, dependsOn:delIliDDL){
-    commandLine 'docker', 'run', postGisImage,
+task runDDL_SinkDB(type:Exec){
+    commandLine 'docker', 'run', '-e', 'POSTGRES_PASSWORD=postgres', '--network', 'host', postGisImage
     ignoreExitValue true
 
     doLast {
@@ -85,6 +88,7 @@ task runDDL_SinkDB(type:Exec, dependsOn:delIliDDL){
     }
 }
 
+/*
 task delIliDDL(type:Exec, dependsOn:runDDL_SinkDB){
     commandLine 'rm', '*.sql'
 }
@@ -92,6 +96,7 @@ task delIliDDL(type:Exec, dependsOn:runDDL_SinkDB){
 task geoDDL(type:Exec, dependsOn:delIliDDL){
     commandLine ''
 }
+*/
 
 String getTravisBuildNumber() {
 	String val = System.getenv('TRAVIS_BUILD_NUMBER')

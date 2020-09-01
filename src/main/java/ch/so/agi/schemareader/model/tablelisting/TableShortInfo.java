@@ -2,28 +2,20 @@ package ch.so.agi.schemareader.model.tablelisting;
 
 public class TableShortInfo {
 	
-	private String schema;
-	private String tableOrView;
+	private String schemaName;
+	private String tableOrViewName;	
 	
-	public TableShortInfo initWithDummies() {
-		schema = "mySchema";
-		tableOrView = "myTable";
-		
-		return this;
-	}	
-	
-	
-	public String getSchema() {
-		return schema;
+	public String getSchemaName() {
+		return schemaName;
 	}
-	public void setSchema(String schema) {
-		this.schema = schema;
+	public void setSchemaName(String schema) {
+		this.schemaName = schema;
 	}
-	public String getTableOrView() {
-		return tableOrView;
+	public String getTvName() {
+		return tableOrViewName;
 	}
-	public void setTableOrView(String tableOrView) {
-		this.tableOrView = tableOrView;
+	public void setTvName(String tvName) {
+		this.tableOrViewName = tvName;
 	}
 }
 

@@ -69,10 +69,10 @@ public class ColumnInfo {
 	public void setGeoColSrOrg(String geoColSrOrg) {
 		this.geoColSrOrg = geoColSrOrg;
 	}
-	public Integer getGeoColSrID() {
+	public Integer getGeoColSrId() {
 		return geoColSrID;
 	}
-	public void setGeoColSrID(Integer geoColSrID) {
+	public void setGeoColSrId(Integer geoColSrID) {
 		this.geoColSrID = geoColSrID;
 	}
 }

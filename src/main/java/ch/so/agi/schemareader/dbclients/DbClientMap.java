@@ -1,18 +1,16 @@
 package ch.so.agi.schemareader.dbclients;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.so.agi.schemareader.config.DbConfig;
 import ch.so.agi.schemareader.config.DbConfig.Datasource;
@@ -34,7 +32,8 @@ public class DbClientMap {
 		JdbcTemplate res = clients.get(dbIdentifier);
 		
 		if(res == null)
-			throw new RuntimeException(
+			throw new ResponseStatusException(
+				HttpStatus.INTERNAL_SERVER_ERROR,
 				MessageFormat.format("Could not find db with key \"{0}\".", dbIdentifier)
 			);
 		
@@ -61,7 +60,9 @@ public class DbClientMap {
             driver = (Driver)Class.forName(driverClassName).getDeclaredConstructor().newInstance();
         }
         catch(Exception e){
-            throw new RuntimeException("Could not find and load jdbc Driver Class " + driverClassName, e);
+            throw new ResponseStatusException(
+            		HttpStatus.INTERNAL_SERVER_ERROR,
+            		"Could not find and load jdbc Driver Class " + driverClassName, e);
         }
     	
         dataSource.setDriver(driver);

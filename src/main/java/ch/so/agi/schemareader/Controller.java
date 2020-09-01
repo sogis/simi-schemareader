@@ -1,49 +1,49 @@
 package ch.so.agi.schemareader;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.so.agi.schemareader.config.DbConfig;
-import ch.so.agi.schemareader.config.DbConfig.Datasource;
 import ch.so.agi.schemareader.dbclients.DbClientMap;
-import ch.so.agi.schemareader.model.tableinfo.TableInfo;
-import ch.so.agi.schemareader.model.tablelisting.TableShortInfo;
+import ch.so.agi.schemareader.model.tableinfo.TableAndColumnInfo;
+import ch.so.agi.schemareader.model.tablelisting.TableListing;
+import ch.so.agi.schemareader.query.TableInfoQuery;
+import ch.so.agi.schemareader.query.TableListingQuery;
 
 
-@RestController
+@RestController()
 public class Controller {
 	
+	@Autowired
+	DbClientMap dbClients;
+	
     @RequestMapping("/{db}/{schema}/{table}")
-    public TableInfo queryTableInfo(){
+    public TableAndColumnInfo queryTableInfo(
+    		@PathVariable(required = true) String db,
+    		@PathVariable(required = true) String schema,
+    		@PathVariable(required = true) String table){
     	
-    	TableInfo ti = new TableInfo();
-    	ti.initWithDummies();
+    	JdbcTemplate dbClient = dbClients.getClient(db);
     	
-    	return ti;
+    	TableAndColumnInfo tci = TableInfoQuery.queryTableInfo(dbClient, schema, table);
+    	
+    	return tci;
     }
     
     @RequestMapping("/{db}")
-    public List<TableShortInfo> listMatchingTables(
+    public TableListing listMatchingTables(
+    			@PathVariable String db,
 	    		@RequestParam(name = "schema", required = false) String schemaNameFragment,
-	    		@RequestParam(name = "table") String tableNameFragment
-    		){    	
-   	
-    	TableShortInfo tsi = new TableShortInfo();
-    	tsi.initWithDummies();
+	    		@RequestParam(name = "table", required = false) String tableNameFragment
+    		){  
+    	  	
+  	   	JdbcTemplate dbClient = dbClients.getClient(db);
+    	TableListing res = TableListingQuery.queryTables(dbClient, schemaNameFragment, tableNameFragment);
     	
-    	ArrayList<TableShortInfo> list = new ArrayList<>();
-    	list.add(tsi);
-    	list.add(tsi);
-    	
-    	return list;
-    }
-    
-    
+    	return res;
+    } 
 }
 
