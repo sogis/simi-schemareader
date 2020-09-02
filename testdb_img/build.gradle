@@ -70,16 +70,19 @@ $td:
 - Erweiteren mit den weiteren Modellen, Image-Brennen, etc.
 */
 
+5:30 - 7:10
+
 def postGisImage = 'postgis/postgis:11-2.5-alpine'
-def ili2pg_JarFilePath = '~/tools/ili2pg-4.3.1/ili2pg-4.3.1.jar'
+def schemaBase = [
+	'java', '-jar', '/home/bjsvwjek/tools/ili2pg-4.3.1/ili2pg-4.3.1.jar',
+	'--schemaimport', 
+	'--dbdatabase', 'postgres',
+	'--dbusr', 'postgres',
+	'--dbpwd', 'postgres',
+	'--modeldir', '%ILI_FROM_DB;http://models.interlis.ch/;' + projectDir.toString() + '/ili'
+]
 
-/*
-task iliDDL(dependsOn:geoDDL){
-}
-*/
-//jdbc:postgresql://localhost:5432/postgres
-
-task runDDL_SinkDB(type:Exec){
+task startDB(type:Exec){
     commandLine 'docker', 'run', '-e', 'POSTGRES_PASSWORD=postgres', '--network', 'host', postGisImage
     ignoreExitValue true
 
@@ -87,6 +90,24 @@ task runDDL_SinkDB(type:Exec){
         sleep(5000)
     }
 }
+
+task ext0(type:Exec){
+	commandLine = schemaBase.clone() + [
+				'--dbschema', 'ext0',
+				'--models', 'CH_SoSrBase',
+				'--preScript', projectDir.toString() + '/ili/ExtensionChain_Pre.sql',
+				projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
+task ext1(type:Exec, dependsOn:ext0){
+	commandLine	= schemaBase.clone() + [
+				'--dbschema', 'ext1',
+				'--models', 'SO_SrExtended',
+				projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
 
 /*
 task delIliDDL(type:Exec, dependsOn:runDDL_SinkDB){
