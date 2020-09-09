@@ -3,26 +3,26 @@ package ch.so.agi.schemareader.model.tableinfo;
 /*
  * Information to a column of the table described with the TableInfo class.
  */
-public class ColumnInfo {
+public class FieldInfo {
 	
 	private String name;
 	private boolean mandatory;
 	private String type;
 	private Integer length;
 	private String description;
-	private String geoColType;
-	private String geoColSrOrg;
-	private Integer geoColSrID;
+	private String geoFieldType;
+	private String geoFieldSrOrg;
+	private Integer geoFieldSrId;
 	
-	public ColumnInfo initWithDummies() {
+	public FieldInfo initWithDummies() {
 		this.name = "myCol";
 		this.mandatory = true;
 		this.type = "myType";
 		this.length = 256;
 		this.description = "lorem ipsum";
-		this.geoColType = "POINT";
-		this.geoColSrOrg = "EPSG";
-		this.geoColSrID = 2056;
+		this.geoFieldType = "POINT";
+		this.geoFieldSrOrg = "EPSG";
+		this.geoFieldSrId = 2056;
 		
 		return this;
 	}	
@@ -57,22 +57,27 @@ public class ColumnInfo {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getGeoColType() {
-		return geoColType;
+	public String getGeoFieldType() {
+		return geoFieldType;
 	}
-	public void setGeoColType(String geoColType) {
-		this.geoColType = geoColType;
+
+	public void setGeoFieldType(String geoFieldType) {
+		this.geoFieldType = geoFieldType;
 	}
-	public String getGeoColSrOrg() {
-		return geoColSrOrg;
+
+	public String getGeoFieldSrOrg() {
+		return geoFieldSrOrg;
 	}
-	public void setGeoColSrOrg(String geoColSrOrg) {
-		this.geoColSrOrg = geoColSrOrg;
+
+	public void setGeoFieldSrOrg(String geoFieldSrOrg) {
+		this.geoFieldSrOrg = geoFieldSrOrg;
 	}
-	public Integer getGeoColSrId() {
-		return geoColSrID;
+
+	public Integer getGeoFieldSrId() {
+		return geoFieldSrId;
 	}
-	public void setGeoColSrId(Integer geoColSrID) {
-		this.geoColSrID = geoColSrID;
+
+	public void setGeoFieldSrId(Integer geoFieldSrId) {
+		this.geoFieldSrId = geoFieldSrId;
 	}
 }

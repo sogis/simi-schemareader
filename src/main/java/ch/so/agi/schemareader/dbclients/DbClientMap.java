@@ -32,12 +32,25 @@ public class DbClientMap {
 		JdbcTemplate res = clients.get(dbIdentifier);
 		
 		if(res == null)
-			throw new ResponseStatusException(
-				HttpStatus.INTERNAL_SERVER_ERROR,
-				MessageFormat.format("Could not find db with key \"{0}\".", dbIdentifier)
-			);
+			throwMatchingError(dbIdentifier);
 		
 		return res;
+	}
+	
+	private void throwMatchingError(String dbIdentifier) {
+		
+		if(clients != null && clients.size() > 0) { //config is ok --> client called with unknown dbIdentifier
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageFormat.format(
+					"Requested db identifier {0} is not configured. Schemareader service has {1} db's configured in the service",
+					dbIdentifier,
+					clients.size()
+					));
+		}
+		else {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, 
+					"Schemareader configuration has no configured db connections - deployment must be checked"
+					);
+		}
 	}
 	
 	private void initDbClients(){

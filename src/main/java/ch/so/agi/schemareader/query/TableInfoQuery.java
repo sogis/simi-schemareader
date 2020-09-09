@@ -5,8 +5,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import ch.so.agi.schemareader.model.tableinfo.ColumnInfo;
-import ch.so.agi.schemareader.model.tableinfo.TableAndColumnInfo;
+import ch.so.agi.schemareader.model.tableinfo.FieldInfo;
+import ch.so.agi.schemareader.model.tableinfo.TableAndFieldInfo;
 import ch.so.agi.schemareader.model.tableinfo.TableInfo;
 import ch.so.agi.schemareader.util.Util;
 
@@ -19,23 +19,23 @@ public class TableInfoQuery {
 	private static final String TABLE_QUERY_FILE = "classpath:sql/tableinfo_table.sql";
 	private static String TABLE_QUERY = null;
 	
-	private static final String COLUMNS_QUERY_FILE = "classpath:sql/tableinfo_columns.sql";
+	private static final String COLUMNS_QUERY_FILE = "classpath:sql/tableinfo_fields.sql";
 	private static String COLUMNS_QUERY = null;
 
 	private JdbcTemplate dbClient;
 	private String schemaName;
 	private String tableName;
 	
-	public static TableAndColumnInfo queryTableInfo(JdbcTemplate dbClient, String schemaName, String tableName) {
+	public static TableAndFieldInfo queryTableInfo(JdbcTemplate dbClient, String schemaName, String tableName) {
 		
 		TableInfoQuery queryExec = new TableInfoQuery(dbClient, schemaName, tableName);
 		
 		TableInfo ti = queryExec.queryTableInfo();
-		List<ColumnInfo> cols = queryExec.queryColumns();
+		List<FieldInfo> fields = queryExec.queryFields();
 		
-		TableAndColumnInfo tci = new TableAndColumnInfo();
+		TableAndFieldInfo tci = new TableAndFieldInfo();
 		tci.setTableInfo(ti);
-		tci.setColumns(cols);
+		tci.setFields(fields);
 		
 		return tci;
 	}
@@ -79,14 +79,14 @@ public class TableInfoQuery {
 		return list.get(0);
 	}
 	
-	private List<ColumnInfo> queryColumns() {
+	private List<FieldInfo> queryFields() {
 		
- 		List<ColumnInfo> list = null;
+ 		List<FieldInfo> list = null;
  		
 		list = dbClient.query(
 				COLUMNS_QUERY, 
 				new String[] {schemaName, tableName},
-				new BeanPropertyRowMapper<ColumnInfo>(ColumnInfo.class)
+				new BeanPropertyRowMapper<FieldInfo>(FieldInfo.class)
 				);
 		
 		return list;

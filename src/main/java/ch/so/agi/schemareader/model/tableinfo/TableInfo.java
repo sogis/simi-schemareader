@@ -5,7 +5,7 @@ import ch.so.agi.schemareader.model.tablelisting.TableShortInfo;
 public class TableInfo extends TableShortInfo {
 	
 	private String description;
-	private String pkColumn;
+	private String pkField;
 		
 	public String getDescription() {
 		return description;
@@ -13,10 +13,10 @@ public class TableInfo extends TableShortInfo {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getPkColumn() {
-		return pkColumn;
+	public String getPkField() {
+		return pkField;
 	}
-	public void setPkColumn(String pkColumn) {
-		this.pkColumn = pkColumn;
+	public void setPkField(String pkField) {
+		this.pkField = pkField;
 	}
 }

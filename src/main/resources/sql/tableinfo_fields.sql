@@ -61,9 +61,9 @@ att_all AS (
 		att_typ as type,
 		att_length as length,
 		att_desc as description,
-		geo_col_type as geo_col_type,
-		geo_col_sr_id as geo_col_sr_id,
-		geo_col_sr_org as geo_col_sr_org  
+		geo_col_type as geo_field_type,
+		geo_col_sr_id as geo_field_sr_id,
+		geo_col_sr_org as geo_field_sr_org  
 	FROM 
 		att_base
 	LEFT JOIN 

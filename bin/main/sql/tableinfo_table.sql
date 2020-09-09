@@ -51,7 +51,7 @@ table_view_all as (
 		tv_schema_name as schema_name,
 		tv_name as tv_name,
 		tv_desc as description,
-		pkattr_name as pk_column
+		pkattr_name as pk_field
 	from
 		table_view_base
 	left join

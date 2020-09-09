@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL SO_SrAttrTypes (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+
+  TOPIC Top =
+
+    CLASS AttrTypes =
+      Int32 : 0 .. 2147483647;
+      CharMax : MTEXT;
+      Char255 : MTEXT*255;
+      CharMand : MANDATORY MTEXT*255;
+      Uid : INTERLIS.UUIDOID;
+      DateOnly : INTERLIS.XMLDate;
+      DateWithTime: INTERLIS.XMLDateTime;
+    END AttrTypes;
+
+  END Top;
+
+END SO_SrAttrTypes.

@@ -2,10 +2,10 @@ package ch.so.agi.schemareader.model.tableinfo;
 
 import java.util.List;
 
-public class TableAndColumnInfo {
+public class TableAndFieldInfo {
 	
 	private TableInfo tableInfo;
-	private List<ColumnInfo> columns;	
+	private List<FieldInfo> fields;	
 	
 	public TableInfo getTableInfo() {
 		return tableInfo;
@@ -15,12 +15,12 @@ public class TableAndColumnInfo {
 		this.tableInfo = tableInfo;
 	}
 	
-	public List<ColumnInfo> getColumns() {
-		return columns;
+	public List<FieldInfo> getFields() {
+		return fields;
 	}
 
-	public void setColumns(List<ColumnInfo> columns) {
-		this.columns = columns;
+	public void setFields(List<FieldInfo> columns) {
+		this.fields = columns;
 	}
 }
 

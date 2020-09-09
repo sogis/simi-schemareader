@@ -1,77 +1,3 @@
-
-
-
-
-/*
-task buildImage(type:Exec, dependsOn: copyJar) {
-	def githash = getCheckedOutGitCommitHash()
-	def buildident = getTravisBuildNumber()
-	def build_timestamp = getTimestamp()
-
-
- 	workingDir "$projectDir/img_build"
- 	commandLine 'docker', 'build',
-				'--no-cache', '--force-rm',
-				'-t', "sogis/indexupdater:$buildident",
-				'--label', "indexupdater.created=$build_timestamp",
-				'--label', "indexupdater.git_commit=$githash",
-				'--label', "indexupdater.travis_build=$buildident",
-				'-f', 'Dockerfile',  '.'
-}
-
-
-task tagImage(type:Exec, dependsOn: buildImage) {
-	def buildident = getTravisBuildNumber()
-
- 	commandLine 'docker', 'tag',
-				"sogis/indexupdater:$buildident",
-				"sogis/indexupdater:latest"
-}
-
-task stopContainer(type:Exec) {
- 	commandLine 'docker', 'rm', '-f', 'indexupdater'
- 	ignoreExitValue true
-}
-
-task runImage(type:Exec){
- 	workingDir "$projectDir/img_build"
- 	commandLine './run_image.sh', 'bg'
-
- 	dependsOn stopContainer
- 	dependsOn tagImage
- 	dependsOn startEnv
-
- 	doLast {
-        sleep(10000)
-    }
-}
-
-task intTest(type: Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.intTest.output.classesDirs
-    classpath = sourceSets.intTest.runtimeClasspath
-    shouldRunAfter test
-
-    mustRunAfter runImage
-}
-
-task testImage(){
-	dependsOn runImage
-	dependsOn intTest
-}
-*/
-
-/*
-$td:
-- ili2pg für SO_Geo.ili auf der Kommandozeile ausführen, mit Angabe des Modelles (da nicht in geo.so.ch/models)
-- In build.gradle integrieren (task geoDDL)
-- Erweiteren mit den weiteren Modellen, Image-Brennen, etc.
-*/
-
-5:30 - 7:10
-
 def postGisImage = 'postgis/postgis:11-2.5-alpine'
 def schemaBase = [
 	'java', '-jar', '/home/bjsvwjek/tools/ili2pg-4.3.1/ili2pg-4.3.1.jar',
@@ -82,7 +8,7 @@ def schemaBase = [
 	'--modeldir', '%ILI_FROM_DB;http://models.interlis.ch/;' + projectDir.toString() + '/ili'
 ]
 
-task startDB(type:Exec){
+task dbEmpty(type:Exec){
     commandLine 'docker', 'run', '-e', 'POSTGRES_PASSWORD=postgres', '--network', 'host', postGisImage
     ignoreExitValue true
 
@@ -95,7 +21,6 @@ task ext0(type:Exec){
 	commandLine = schemaBase.clone() + [
 				'--dbschema', 'ext0',
 				'--models', 'CH_SoSrBase',
-				'--preScript', projectDir.toString() + '/ili/ExtensionChain_Pre.sql',
 				projectDir.toString() + '/ili/ExtensionChain.ili'
 	]
 }
@@ -108,17 +33,68 @@ task ext1(type:Exec, dependsOn:ext0){
 	]
 }
 
+task ext2(type:Exec, dependsOn:ext1){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'ext2',
+			'--models', 'SO_SrExtended2',
+			projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
+task extended {
+	dependsOn {[ext0, ext1, ext2]}
+}
+
+task attrTypes(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'attr_types',
+			'--models', 'SO_SrAttrTypes',
+			'--preScript', projectDir.toString() + '/ili/SO_SrAttrTypes_Pre.sql',
+			projectDir.toString() + '/ili/SO_SrAttrTypes.ili'
+	]
+}
+
+task comments(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'comments',
+			'--models', 'SO_SrComments',
+			projectDir.toString() + '/ili/SO_SrComments.ili'
+	]
+}
+
+task pkey(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'pkey',
+			'--models', 'SO_SrPrimaryKey',
+			'--postScript', projectDir.toString() + '/ili/SO_SrPrimaryKey_Post.sql',
+			projectDir.toString() + '/ili/SO_SrPrimaryKey.ili'
+	]
+}
+
+task geo(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'geo',
+			'--models', 'SO_SrGeo',
+			projectDir.toString() + '/ili/SO_SrGeo.ili'
+	]
+}
+
+
+task ddl{
+	dependsOn {[extended, attrTypes, comments, pkey, geo]}
+
+	mustRunAfter dbEmpty
+}
+
+
+task dbDdl{
+	dependsOn {[dbEmpty, ddl]}
+}
+
+
+
 
 /*
-task delIliDDL(type:Exec, dependsOn:runDDL_SinkDB){
-    commandLine 'rm', '*.sql'
-}
-
-task geoDDL(type:Exec, dependsOn:delIliDDL){
-    commandLine ''
-}
-*/
-
 String getTravisBuildNumber() {
 	String val = System.getenv('TRAVIS_BUILD_NUMBER')
 
@@ -136,3 +112,4 @@ def getTimestamp() {
     def date = new Date()
     return date.format('yyyy-MM-dd HH:mm:ss')
 }
+*/
