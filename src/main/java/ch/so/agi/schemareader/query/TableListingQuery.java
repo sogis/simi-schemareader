@@ -73,7 +73,11 @@ public class TableListingQuery {
 			truncatedTo = MAX_RESPONSE_COUNT;
 		}
 		
-		return new TableListing(list, truncatedTo);
+		TableListing tl = new TableListing();
+		tl.setTableViewList(list);
+		tl.setTruncatedTo(truncatedTo);
+		
+		return tl;
 	}
 }
 

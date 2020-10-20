@@ -41,7 +41,7 @@ public class DbClientMap {
 		
 		if(clients != null && clients.size() > 0) { //config is ok --> client called with unknown dbIdentifier
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, MessageFormat.format(
-					"Requested db identifier {0} is not configured. Schemareader service has {1} db's configured in the service",
+					"Requested db identifier '{0}' is not configured. Schemareader service has {1} db's configured in the service",
 					dbIdentifier,
 					clients.size()
 					));

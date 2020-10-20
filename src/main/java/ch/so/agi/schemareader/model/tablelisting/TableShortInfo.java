@@ -1,8 +1,13 @@
 package ch.so.agi.schemareader.model.tablelisting;
 
+import javax.validation.constraints.NotBlank;
+
 public class TableShortInfo {
 	
+	@NotBlank
 	private String schemaName;
+	
+	@NotBlank
 	private String tableOrViewName;	
 	
 	public String getSchemaName() {

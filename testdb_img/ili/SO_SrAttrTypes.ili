@@ -10,11 +10,20 @@ VERSION "2020-07-27"  =
       Int32 : 0 .. 2147483647;
       CharMax : MTEXT;
       Char255 : MTEXT*255;
-      CharMand : MANDATORY MTEXT*255;
-      Uid : INTERLIS.UUIDOID;
+      MyUid : INTERLIS.UUIDOID;
       DateOnly : INTERLIS.XMLDate;
       DateWithTime: INTERLIS.XMLDateTime;
     END AttrTypes;
+    
+    CLASS MandOpt =
+      Mand : MANDATORY  0 .. 2147483647;
+      Opt : 0 .. 2147483647;
+    END MandOpt;
+     
+    CLASS CharLength =
+      Char255 : MTEXT*255;
+      CharMax : MTEXT;
+    END CharLength;
 
   END Top;
 

@@ -7,11 +7,6 @@ public class TableListing {
 	private List<TableShortInfo> tableViewList;
 	private Integer truncatedTo;
 	
-	public TableListing(List<TableShortInfo> tableViewList, Integer truncatedTo) {
-		this.tableViewList = tableViewList;
-		this.truncatedTo = truncatedTo;
-	}	
-	
 	public List<TableShortInfo> getTableViewList() {
 		return tableViewList;
 	}
@@ -19,4 +14,12 @@ public class TableListing {
 	public Integer getTruncatedTo() {
 		return truncatedTo;
 	}	
+	
+	public void setTableViewList(List<TableShortInfo> tableViewList) {
+		this.tableViewList = tableViewList;
+	}
+
+	public void setTruncatedTo(Integer truncatedTo) {
+		this.truncatedTo = truncatedTo;
+	}
 }

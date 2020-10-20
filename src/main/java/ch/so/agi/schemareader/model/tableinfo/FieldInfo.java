@@ -1,15 +1,25 @@
 package ch.so.agi.schemareader.model.tableinfo;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /*
  * Information to a column of the table described with the TableInfo class.
  */
 public class FieldInfo {
 	
+	@NotNull
 	private String name;
+	
 	private boolean mandatory;
+	
+	@NotBlank
 	private String type;
+	
 	private Integer length;
+	
 	private String description;
+	
 	private String geoFieldType;
 	private String geoFieldSrOrg;
 	private Integer geoFieldSrId;
