@@ -4,8 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'ch.so.agi.schemareader'
-version = '0.0.1-SNAPSHOT'
+group = 'ch.so.agi.simi.schemareader'
 sourceCompatibility = '11'
 
 repositories {
@@ -18,7 +17,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	
+		
 	implementation 'org.postgresql:postgresql'
 	
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -29,3 +28,88 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+task copyJar(type: Copy, dependsOn: build){
+    from file("$buildDir/libs/schemareader.jar")
+    into file("$projectDir/img_build/tmp")
+}
+
+task buildImage(type:Exec, dependsOn: copyJar) {
+	def githash = getCheckedOutGitCommitHash()
+	def buildident = getTravisBuildNumber()
+	def build_timestamp = getTimestamp()
+
+ 	workingDir "$projectDir/img_build"
+ 	commandLine 'docker', 'build',
+				'--no-cache', '--force-rm',
+				'-t', "sogis/simi_schemareader:$buildident",
+				'--label', "simi_schemareader.created=$build_timestamp", 
+				'--label', "simi_schemareader.git_commit=$githash",
+				'--label', "simi_schemareader.travis_build=$buildident",
+				'-f', 'Dockerfile',  '.'
+}
+
+
+task tagImage(type:Exec, dependsOn: buildImage) {
+	def buildident = getTravisBuildNumber()
+	
+ 	commandLine 'docker', 'tag', 
+				"sogis/simi_schemareader:$buildident",
+				"sogis/simi_schemareader:latest"
+}
+
+
+/*
+task stopContainer(type:Exec) {
+ 	commandLine 'docker', 'rm', '-f', 'indexupdater'
+ 	ignoreExitValue true
+}
+
+task runImage(type:Exec){
+ 	workingDir "$projectDir/img_build"
+ 	commandLine './run_image.sh', 'bg'
+ 	
+ 	dependsOn stopContainer
+ 	dependsOn tagImage
+ 	dependsOn startEnv
+ 	
+ 	doLast { 	
+        sleep(10000)
+    }
+}
+
+task intTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.intTest.runtimeClasspath
+    shouldRunAfter test
+    
+    mustRunAfter runImage
+}
+
+task testImage(){
+	dependsOn runImage
+	dependsOn intTest	
+}
+*/
+
+String getTravisBuildNumber() {
+	String val = System.getenv('TRAVIS_BUILD_NUMBER')
+	
+	if(val == null)
+		val = 'localbuild'
+		
+	return val
+}
+
+def getCheckedOutGitCommitHash() {
+  'git log -1 --pretty=%H'.execute().text.trim()
+}
+
+def getTimestamp() {
+    def date = new Date()
+    return date.format('yyyy-MM-dd HH:mm:ss')
+}
+
