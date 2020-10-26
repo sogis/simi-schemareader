@@ -29,9 +29,16 @@ test {
 	useJUnitPlatform()
 }
 
-task copyJar(type: Copy, dependsOn: build){
+task testJar{
+	dependsOn 'testdb:initTestDb'
+	dependsOn build
+	
+	build.mustRunAfter 'testdb:initTestDb'
+}
+
+task copyJar(type: Copy, dependsOn: testJar){
     from file("$buildDir/libs/schemareader.jar")
-    into file("$projectDir/img_build/tmp")
+    into file("$projectDir/docker/build/tmp")
 }
 
 task buildImage(type:Exec, dependsOn: copyJar) {
@@ -39,7 +46,7 @@ task buildImage(type:Exec, dependsOn: copyJar) {
 	def buildident = getTravisBuildNumber()
 	def build_timestamp = getTimestamp()
 
- 	workingDir "$projectDir/img_build"
+ 	workingDir "$projectDir/docker/build"
  	commandLine 'docker', 'build',
 				'--no-cache', '--force-rm',
 				'-t', "sogis/simi_schemareader:$buildident",
@@ -58,42 +65,38 @@ task tagImage(type:Exec, dependsOn: buildImage) {
 				"sogis/simi_schemareader:latest"
 }
 
-
-/*
-task stopContainer(type:Exec) {
- 	commandLine 'docker', 'rm', '-f', 'indexupdater'
+task imgDown(type:Exec) {
+  workingDir "$projectDir/docker"
+ 	commandLine 'docker-compose', 'down'
  	ignoreExitValue true
 }
 
-task runImage(type:Exec){
- 	workingDir "$projectDir/img_build"
- 	commandLine './run_image.sh', 'bg'
+task imgUp(type:Exec){
+ 	workingDir "$projectDir/docker"
+ 	commandLine 'docker-compose', 'up', '-d'
  	
- 	dependsOn stopContainer
- 	dependsOn tagImage
- 	dependsOn startEnv
+ 	dependsOn imgDown
  	
  	doLast { 	
-        sleep(10000)
+	  sleep(10000)
+	}
+}
+
+// Asserts with one http get that the image is "sane"
+task imgTest{
+
+	dependsOn imgUp
+	dependsOn tagImage
+	
+	tagImage.mustRunAfter imgUp
+	
+ 	doLast { 	
+        def resp = new java.net.URL("http://localhost:8080/postgis?schema=public").text
+        
+        if(resp == null || !resp.contains("tableViewList"))
+        	throw new java.lang.RuntimeException("Can't execute get on docker image") 
     }
 }
-
-task intTest(type: Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.intTest.output.classesDirs
-    classpath = sourceSets.intTest.runtimeClasspath
-    shouldRunAfter test
-    
-    mustRunAfter runImage
-}
-
-task testImage(){
-	dependsOn runImage
-	dependsOn intTest	
-}
-*/
 
 String getTravisBuildNumber() {
 	String val = System.getenv('TRAVIS_BUILD_NUMBER')

@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL SO_SrPrimaryKey (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+
+  TOPIC Top =
+
+    CLASS WithPk =
+      Id : MANDATORY 0 .. 2147483647;
+    END WithPk;
+
+    CLASS WithoutPk =
+      Id : MANDATORY 0 .. 2147483647;
+    END WithoutPk;
+
+  END Top;
+
+END SO_SrPrimaryKey.

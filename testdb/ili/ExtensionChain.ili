@@ -1,0 +1,56 @@
+INTERLIS 2.3;
+
+MODEL CH_SoSrBase (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+  IMPORTS GeometryCHLV95_V1;
+
+  TOPIC Top =
+
+    CLASS Cls0 =
+      Geometrie : MANDATORY GeometryCHLV95_V1.Coord2;
+      Id : MANDATORY 0 .. 2147483647;
+    END Cls0;
+
+  END Top;
+
+END CH_SoSrBase.
+
+
+
+MODEL SO_SrExtended (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+  IMPORTS CH_SoSrBase;
+
+  TOPIC Top
+  EXTENDS CH_SoSrBase.Top =
+  
+    CLASS Cls1
+    EXTENDS CH_SoSrBase.Top.Cls0 =
+      ExtAttr : MANDATORY TEXT;
+    END Cls1;
+
+  END Top;
+
+END SO_SrExtended.
+
+
+MODEL SO_SrExtended2 (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+  IMPORTS SO_SrExtended;
+
+  TOPIC Top
+  EXTENDS SO_SrExtended.Top =
+  
+    CLASS Cls2
+    EXTENDS SO_SrExtended.Top.Cls1 =
+      ExtAttr2 : MANDATORY TEXT;
+    END Cls2;
+
+  END Top;
+
+END SO_SrExtended2.
+
+

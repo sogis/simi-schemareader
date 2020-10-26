@@ -1,0 +1,29 @@
+INTERLIS 2.3;
+
+MODEL SO_SrComments (de)
+AT "https://agi.so.ch"
+VERSION "2020-07-27"  =
+  IMPORTS GeometryCHLV95_V1;
+
+  TOPIC Top =
+
+    /** This is a INTERLIS class comment
+    */
+    CLASS ClsComment =
+      Geometrie : MANDATORY GeometryCHLV95_V1.Coord2;
+      Id : MANDATORY 0 .. 2147483647;
+    END ClsComment;
+
+
+    CLASS AttrComment =
+      Geometrie : MANDATORY GeometryCHLV95_V1.Coord2;
+      Id : MANDATORY 0 .. 2147483647;
+
+      /** This is a INTERLIS attribute comment
+      */
+      CommentAttr : MANDATORY TEXT;
+    END AttrComment;
+
+  END Top;
+
+END SO_SrComments.

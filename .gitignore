@@ -1,1 +1,9 @@
-**build/
+# Do not add files from folders bin, build, tmp (located anywhere in the folder tree)
+**/bin
+**/build
+**/tmp
+
+# Do not add hidden files and dirs (located anywhere in the folder tree)
+# Except: The gitignore file itself
+.*
+!/.gitignore

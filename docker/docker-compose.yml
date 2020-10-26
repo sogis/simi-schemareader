@@ -1,0 +1,12 @@
+version: "3"
+services:
+  schemareader:
+    image: sogis/simi_schemareader
+    environment: 
+      - SPRING_APPLICATION_JSON={"dbs":[{"key":"postgis","url":"jdbc:postgresql://postgis:5432/postgres","user":"postgres","pass":"postgres"}]}
+    ports:
+      - "8080:8080"
+  postgis:
+    image: postgis/postgis:11-2.5-alpine
+    environment: 
+      - POSTGRES_PASSWORD=postgres

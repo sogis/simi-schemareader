@@ -1,0 +1,114 @@
+plugins {
+  id "de.undercouch.download" version "4.1.1"
+}
+
+def ili2pgJarFilePath = "$buildDir/ili2pg/ili2pg-4.3.1.jar"
+def schemaBase = [
+	'java', '-jar', ili2pgJarFilePath,
+	'--schemaimport', 
+	'--dbdatabase', 'postgres',
+	'--dbusr', 'postgres',
+	'--dbpwd', 'postgres',
+	'--modeldir', '%ILI_FROM_DB;http://models.interlis.ch/;' + projectDir.toString() + '/ili'
+]
+
+task dbStop(type:Exec) {
+ 	commandLine 'docker-compose', 'down'
+}
+
+task dbStart(type:Exec) { //empty db
+
+	dependsOn dbStop
+ 	commandLine 'docker-compose', 'up', '-d'
+ 	
+ 	doLast {
+        sleep(5000)
+    }
+}
+
+task fetchIli2pg(type: Download) {
+    src 'http://jars.interlis.ch/ch/interlis/ili2pg/4.3.1/ili2pg-4.3.1-bindist.zip'
+    dest buildDir
+}
+
+task unzipIli2pg(dependsOn: fetchIli2pg, type: Copy) {
+    from zipTree("$buildDir/ili2pg-4.3.1-bindist.zip")
+    into "$buildDir/ili2pg"
+}
+
+task ddlExecEnvironment{
+	dependsOn unzipIli2pg
+	dependsOn dbStart
+}
+
+task ext0(type:Exec){
+	commandLine = schemaBase.clone() + [
+				'--dbschema', 'ext0',
+				'--models', 'CH_SoSrBase',
+				projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
+task ext1(type:Exec, dependsOn:ext0){
+	commandLine	= schemaBase.clone() + [
+				'--dbschema', 'ext1',
+				'--models', 'SO_SrExtended',
+				projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
+task ext2(type:Exec, dependsOn:ext1){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'ext2',
+			'--models', 'SO_SrExtended2',
+			projectDir.toString() + '/ili/ExtensionChain.ili'
+	]
+}
+
+task extended {
+	dependsOn {[ext0, ext1, ext2]}
+}
+
+task attrTypes(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'attr_types',
+			'--models', 'SO_SrAttrTypes',
+			'--preScript', projectDir.toString() + '/ili/SO_SrAttrTypes_Pre.sql',
+			projectDir.toString() + '/ili/SO_SrAttrTypes.ili'
+	]
+}
+
+task comments(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'comments',
+			'--models', 'SO_SrComments',
+			projectDir.toString() + '/ili/SO_SrComments.ili'
+	]
+}
+
+task pkey(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'pkey',
+			'--models', 'SO_SrPrimaryKey',
+			'--postScript', projectDir.toString() + '/ili/SO_SrPrimaryKey_Post.sql',
+			projectDir.toString() + '/ili/SO_SrPrimaryKey.ili'
+	]
+}
+
+task geo(type:Exec){
+	commandLine	= schemaBase.clone() + [
+			'--dbschema', 'geo',
+			'--models', 'SO_SrGeo',
+			projectDir.toString() + '/ili/SO_SrGeo.ili'
+	]
+}
+
+task ddl{
+	dependsOn {[extended, attrTypes, comments, pkey, geo]}
+
+	mustRunAfter ddlExecEnvironment
+}
+
+task initTestDb{
+	dependsOn {[ddlExecEnvironment, ddl]}
+}
