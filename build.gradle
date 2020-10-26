@@ -88,7 +88,7 @@ task imgTest{
 	dependsOn imgUp
 	dependsOn tagImage
 	
-	tagImage.mustRunAfter imgUp
+	imgUp.mustRunAfter tagImage
 	
  	doLast { 	
         def resp = new java.net.URL("http://localhost:8080/postgis?schema=public").text
