@@ -1,1 +1,0 @@
-ALTER TABLE pkey.withoutpk DROP COLUMN t_id;
