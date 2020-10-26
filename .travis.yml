@@ -11,9 +11,7 @@ services:
 branches:
   only:
     - master
-
-install: true
-  
+ 
 script:
   - ./gradlew imgTest
   

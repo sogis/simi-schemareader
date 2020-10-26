@@ -29,11 +29,13 @@ Im folgenden Beispiel sind die beiden Datenbanken "pub" und "edit" kongiuriert
 }
 ```
 
-Hinweis: Um Json-Strings ohne Einrückung / Zeilenumbrüche abzuleiten eignet sich beispielsweise der [Json formatter](https://jsonformatter.org/).
+Hinweise: 
+* Um Json-Strings ohne Einrückung / Zeilenumbrüche abzuleiten eignet sich beispielsweise der [Json formatter](https://jsonformatter.org/).
+* Beispiel einer Verwendung: [docker-compose.yml](docker/docker-compose.yml) des Integrationstests des generierten Docker Image.
 
 ## Endpunkte
 
-### http://localhost:8080/[key]?schema=fuu&table=bar - Auflistung der vorhandenen Tabellen und Views
+### http://localhost:8080/[key]?schema=fuu&table=bar
 
 Listet alle Tabellen und oder Views der Datenbank mit entsprechendem [key] auf. In der obig beschriebenen Konfiguration sind die key's "edit" und "pub" konfiguriert.
 * Die in einem Schema enthalten sind, welches im Schemanamen den Teilbegriff "fuu" enthält
@@ -73,7 +75,7 @@ Einer der URL-Parameter "schema", "table" muss mindestens angegeben werden.
 
 Die "truncatedTo"-Zahl gibt an, auf wieviele Zeilen die Rückgabe limitiert wurde. "null", falls keine Limitation erfolgte.
 
-### http://localhost:8080/[key]/[schemaname]/[tablename] - Ausgabe der Detailinformationen zu einer Tabelle oder View
+### http://localhost:8080/[key]/[schemaname]/[tablename]
 
 Gibt die Detailinformationen der durch den Pfad [key]/[schemaname]/[tablename] identifizierten Tabelle oder View zurück.
 
