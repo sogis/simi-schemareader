@@ -1,0 +1,23 @@
+sudo: required
+
+language: java
+
+jdk:
+  - openjdk11
+
+services:
+  - docker
+  
+branches:
+  only:
+    - master
+
+install: true
+  
+script:
+  - ./gradlew imgTest
+  
+after_success:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker push sogis/simi_schemareader:latest
+  - docker push sogis/simi_schemareader:$TRAVIS_BUILD_NUMBER

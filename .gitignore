@@ -4,6 +4,7 @@
 **/tmp
 
 # Do not add hidden files and dirs (located anywhere in the folder tree)
-# Except: The gitignore file itself
+# Except: The gitignore and travis files
 .*
 !/.gitignore
+!/.travis.yml
