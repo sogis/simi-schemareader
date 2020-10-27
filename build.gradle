@@ -38,7 +38,7 @@ task testJar{
 
 task copyJar(type: Copy, dependsOn: testJar){
     from file("$buildDir/libs/schemareader.jar")
-    into file("$projectDir/docker/build/tmp")
+    into file("$projectDir/docker/image/tmp")
 }
 
 task buildImage(type:Exec, dependsOn: copyJar) {
