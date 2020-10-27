@@ -46,7 +46,7 @@ task buildImage(type:Exec, dependsOn: copyJar) {
 	def buildident = getTravisBuildNumber()
 	def build_timestamp = getTimestamp()
 
- 	workingDir "$projectDir/docker/build"
+ 	workingDir "$projectDir/docker/image"
  	commandLine 'docker', 'build',
 				'--no-cache', '--force-rm',
 				'-t', "sogis/simi_schemareader:$buildident",
