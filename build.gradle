@@ -43,7 +43,7 @@ task copyJar(type: Copy, dependsOn: testJar){
 
 task buildImage(type:Exec, dependsOn: copyJar) {
 	def githash = getCheckedOutGitCommitHash()
-	def buildident = getTravisBuildNumber()
+	def buildident = getVersion()
 	def build_timestamp = getTimestamp()
 
  	workingDir "$projectDir/docker/image"
@@ -52,13 +52,13 @@ task buildImage(type:Exec, dependsOn: copyJar) {
 				'-t', "sogis/simi_schemareader:$buildident",
 				'--label', "simi_schemareader.created=$build_timestamp", 
 				'--label', "simi_schemareader.git_commit=$githash",
-				'--label', "simi_schemareader.travis_build=$buildident",
+				'--label', "simi_schemareader.version=$buildident",
 				'-f', 'Dockerfile',  '.'
 }
 
 
 task tagImage(type:Exec, dependsOn: buildImage) {
-	def buildident = getTravisBuildNumber()
+	def buildident = getVersion()
 	
  	commandLine 'docker', 'tag', 
 				"sogis/simi_schemareader:$buildident",
@@ -97,13 +97,25 @@ task imgTest{
         	throw new java.lang.RuntimeException("Can't execute get on docker image") 
     }
 }
+task pushImgLatest(type:Exec) {
+	commandLine 'docker', 'push', "sogis/simi_schemareader:latest"
+}
 
-String getTravisBuildNumber() {
-	String val = System.getenv('TRAVIS_BUILD_NUMBER')
-	
+task pushImg(type:Exec, dependsOn: pushImgLatest) {
+	def version = getVersion()
+	commandLine 'docker', 'push', "sogis/simi_schemareader:$version"
+}
+
+String getVersion(){
+	return "1.0." + getBuildNumber()
+}
+
+String getBuildNumber() {
+	String val = System.getenv('GITHUB_RUN_NUMBER')
+
 	if(val == null)
 		val = 'localbuild'
-		
+
 	return val
 }
 

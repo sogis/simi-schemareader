@@ -7,4 +7,4 @@
 # Except: The gitignore and travis files
 .*
 !/.gitignore
-!/.travis.yml
+!/.github
