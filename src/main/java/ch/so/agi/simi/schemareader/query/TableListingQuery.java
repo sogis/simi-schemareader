@@ -61,10 +61,13 @@ public class TableListingQuery {
 			
 		List<TableShortInfo> list = null;
 		Integer truncatedTo = null;
+
+		String schemaHintSql = replaceWildcards(schemaHint);
+		String tableHintSql = replaceWildcards(tableHint);
 		
 		list = dbClient.query(
 						QUERY, 
-						new String[] {"%" + schemaHint + "%", "%" + tableHint + "%"},
+						new String[] {schemaHintSql, tableHintSql},
 						new BeanPropertyRowMapper<TableShortInfo>(TableShortInfo.class)
 						);
 		
@@ -78,6 +81,13 @@ public class TableListingQuery {
 		tl.setTruncatedTo(truncatedTo);
 		
 		return tl;
+	}
+
+	private static String replaceWildcards(String filterVal){
+		if(filterVal == null)
+			return null;
+
+		return filterVal.trim().replace("*", "%");
 	}
 }
 

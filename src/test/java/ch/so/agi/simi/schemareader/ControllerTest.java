@@ -101,15 +101,29 @@ public class ControllerTest {
 		
 		MvcResult mvcResult = client.perform(get(SEARCH_URL, DB_IDENT_VALID1)
 	            .contentType("application/json")
-	            .param("table", "geo")
-	    		.param("schema", "geo"))
+	            .param("table", "*geo*")
+	    		.param("schema", "*geo*"))
 	            .andExpect(status().isOk())
 	            .andReturn();
 		
 		TableListing listing = mapper.readValue(mvcResult.getResponse().getContentAsString(), TableListing.class);		
 		assertEquals(listing.getTableViewList().size(), 3, "Search pattern *geo*.*geo* must return 3 table matches");
 	}
-	
+
+	@Test
+	void searchGeo_ExactMatch_OK() throws Exception {
+
+		MvcResult mvcResult = client.perform(get(SEARCH_URL, DB_IDENT_VALID1)
+				.contentType("application/json")
+				.param("table", "geo0")
+				.param("schema", "*geo*"))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		TableListing listing = mapper.readValue(mvcResult.getResponse().getContentAsString(), TableListing.class);
+		assertEquals(listing.getTableViewList().size(), 1, "Search pattern *geo*.geo0 must return exactly one table match");
+	}
+
 	@Test
 	void searchWithoutHints_BadRequest() throws Exception {
 		

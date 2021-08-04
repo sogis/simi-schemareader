@@ -35,13 +35,13 @@ Hinweise:
 
 ## Endpunkte
 
-### http://localhost:8080/[key]?schema=fuu&table=bar
+### http://localhost:8080/[key]?schema=*fuu*&table=*bar*
 
 Listet alle Tabellen und oder Views der Datenbank mit entsprechendem [key] auf. In der obig beschriebenen Konfiguration sind die key's "edit" und "pub" konfiguriert.
 * Die in einem Schema enthalten sind, welches im Schemanamen den Teilbegriff "fuu" enthält
 * Deren Name den Teilbegriff "bar" enthält.
 
-Einer der URL-Parameter "schema", "table" muss mindestens angegeben werden.
+Einer der URL-Parameter "schema", "table" muss mindestens angegeben werden. Beim Weglassen der Wildcards (*) wird nach genau übereinstimmenden Begriffen gesucht.
 
 **Beispiel-Resultat** des Aufrufes http://localhost:8080/postgis?schema=pub
 
