@@ -262,7 +262,8 @@ public class ControllerTest {
 		map.put("char255", "varchar");		
 		map.put("myuid", "uuid");
 		map.put("dateonly", "date");
-		map.put("datewithtime", "timestamp");	
+		map.put("datewithtime", "timestamp");
+		map.put("codedvalue", "fuu");
 		
 		int numFieldMatch = 0;
 		for(FieldInfo fi:tfi.getFields()) {

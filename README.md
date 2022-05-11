@@ -128,14 +128,52 @@ Gibt die Detailinformationen der durch den Pfad [key]/[schemaname]/[tablename] i
 ```
 
 
-## Weiterentwicklung
+# (Weiter)entwicklung
 
 * Da Deployment-Pipeline --> SQL's direkt im Code
 * "Integration" Tests im Sinne der Controller-Methoden. Mit Client von ausserhalb bringt wenig mehr - damit testen wir nur "battle proven" Spring Boot Standardfunktionalität
 
-## Konfiguration
+## Lokal Testen / Starten
 
-{"dbs":[{"key":"pub","url":"jdbc:postgresql://localhost:5432/postgres","user":"postgres","pass":"postgres"},{"key":"edit","url":"jdbc:postgresql://localhost:5432/postgres","user":"postgres","pass":"postgres"}]}
+Die Datenbank-Abhängigkeit wurde nicht gemockt, sondern mittels postgis docker image automatisiert. Vor Ausführung der auto. Tests darum die DB hochfahren und initialisieren mittels `./gradlew testdb:initTestDb`.
+
+Beim lokalen Starten (`./gradlew bootRun`) muss sichergestellt werden, dass die ENV **SPRING_APPLICATION_JSON** korrekt gesetzt ist. ENV-Inhalt zum Verbinden auf die mittels `./gradlew testdb:initTestDb` erzeugte Test-DB:
+
+```json
+{
+	"dbs": [{
+		"key": "postgis",
+		"url": "jdbc:postgresql:postgres",
+		"user": "postgres",
+		"pass": "postgres"
+	}]
+}
+```
+
+Aufruf der URL http://localhost:8080/postgis/tiger/addr im Browser liefert die Antwort:
+
+```json
+{
+	"tableInfo": {
+		"schemaName": "tiger",
+		"description": null,
+		"pkField": "gid",
+		"tvName": "addr"
+	},
+	"fields": [{
+		"name": "gid",
+		"mandatory": true,
+		"type": "int4",
+		"length": null,
+		"description": null,
+		"geoFieldType": null,
+		"geoFieldSrOrg": null,
+		"geoFieldSrId": null
+	}, {
+		"...": "..."
+	}]
+}
+```
 
 ## Interner Aufbau
 
@@ -144,6 +182,27 @@ Packages und deren Bedeutung
 * **ch.so.agi.schemareader:** Root-Package mit Spring Controller, Application
 * **ch.so.agi.schemareader.config:** Hilfsklassen zum Einlesen der Spring Boot Konfiguration (z.B: aus ENV SPRING_APPLICATION_JSON)
 * **ch.so.agi.schemareader.dbclients:** Hilfsklassen zur Bereitstellung der DB-Verbindungen auf die abzufragenden Datenbanken (Pub, Edit, ...)
-* **ch.so.agi.schemareader.model.*:** Enthält als Model die Datentransfer-Objekte (DTO) der Services. Die DTO sind das Bindeglied zwischen Resultset und ausgegebener JSON-Response.
-* **ch.so.agi.schemareader.query: Enthält den Code zur Abfrage des Postgresql-Kataloges - sprich die Business-Logik des Service. 
-* **ch.so.agi.schemareader.util: Umfasst mehrfach verwendete statische Hilfsfunktionen.
+* **ch.so.agi.schemareader.model.\*:** Enthält als Model die Datentransfer-Objekte (DTO) der Services. Die DTO sind das Bindeglied zwischen Resultset und ausgegebener JSON-Response.
+* **ch.so.agi.schemareader.query:** Enthält den Code zur Abfrage des Postgresql-Kataloges - sprich die Business-Logik des Service. 
+* **ch.so.agi.schemareader.util:** Umfasst mehrfach verwendete statische Hilfsfunktionen.
+
+# Auslesen Aufzähltyp
+
+## t_ili2db_column_prop V 4.7.0
+
+|tablename|subtype|columnname|tag|setting|
+|---------|-------|----------|---|-------|
+|attrtypes||charmax|ch.ehi.ili2db.textKind|MTEXT|
+|charlength||charmax|ch.ehi.ili2db.textKind|MTEXT|
+|attrtypes|attrtypes|codedvalue|ch.ehi.ili2db.enumDomain|SO_SrAttrTypes.TestEnum|
+|charlength||char255|ch.ehi.ili2db.textKind|MTEXT|
+|attrtypes||char255|ch.ehi.ili2db.textKind|MTEXT|
+
+## t_ili2db_column_prop V 4.3.1
+
+|tablename|subtype|columnname|tag|setting|
+|---------|-------|----------|---|-------|
+|attrtypes||charmax|ch.ehi.ili2db.textKind|MTEXT|
+|charlength||charmax|ch.ehi.ili2db.textKind|MTEXT|
+|charlength||char255|ch.ehi.ili2db.textKind|MTEXT|
+|attrtypes||char255|ch.ehi.ili2db.textKind|MTEXT|
