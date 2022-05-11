@@ -1,6 +1,6 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.3.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'org.springframework.boot' version '2.6.7'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
 
@@ -107,7 +107,7 @@ task pushImg(type:Exec, dependsOn: pushImgLatest) {
 }
 
 String getVersion(){
-	return "1.0." + getBuildNumber()
+	return "1.1." + getBuildNumber()
 }
 
 String getBuildNumber() {
