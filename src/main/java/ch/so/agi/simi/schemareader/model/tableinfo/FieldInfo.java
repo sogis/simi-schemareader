@@ -15,6 +15,8 @@ public class FieldInfo {
 	
 	@NotBlank
 	private String type;
+
+	private String iliEnumName;
 	
 	private Integer length;
 	
@@ -23,20 +25,7 @@ public class FieldInfo {
 	private String geoFieldType;
 	private String geoFieldSrOrg;
 	private Integer geoFieldSrId;
-	
-	public FieldInfo initWithDummies() {
-		this.name = "myCol";
-		this.mandatory = true;
-		this.type = "myType";
-		this.length = 256;
-		this.description = "lorem ipsum";
-		this.geoFieldType = "POINT";
-		this.geoFieldSrOrg = "EPSG";
-		this.geoFieldSrId = 2056;
-		
-		return this;
-	}	
-	
+
 	public String getName() {
 		return name;
 	}
@@ -89,5 +78,13 @@ public class FieldInfo {
 
 	public void setGeoFieldSrId(Integer geoFieldSrId) {
 		this.geoFieldSrId = geoFieldSrId;
+	}
+
+	public String getIliEnumName() {
+		return iliEnumName;
+	}
+
+	public void setIliEnumName(String iliEnumName) {
+		this.iliEnumName = iliEnumName;
 	}
 }

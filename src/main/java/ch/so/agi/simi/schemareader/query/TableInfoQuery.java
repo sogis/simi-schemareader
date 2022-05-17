@@ -24,12 +24,11 @@ public class TableInfoQuery {
 	private static String COLUMNS_QUERY = null;
 
 	private JdbcTemplate dbClient;
-	private String schemaName;
 	private String tableName;
 	
-	public static TableAndFieldInfo queryTableInfo(JdbcTemplate dbClient, String schemaName, String tableName) {
+	public static TableAndFieldInfo queryTableInfo(JdbcTemplate dbClient, String tableName) {
 		
-		TableInfoQuery queryExec = new TableInfoQuery(dbClient, schemaName, tableName);
+		TableInfoQuery queryExec = new TableInfoQuery(dbClient, tableName);
 		
 		TableInfo ti = queryExec.queryTableInfo();
 		List<FieldInfo> fields = queryExec.queryFields();
@@ -41,13 +40,10 @@ public class TableInfoQuery {
 		return tci;
 	}
 	
-	private TableInfoQuery(JdbcTemplate dbClient, String schemaName, String tableName) {
+	private TableInfoQuery(JdbcTemplate dbClient, String tableName) {
 		
 		if(dbClient == null)
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Argument dbClient must not be null");
-					
-		if(StringUtils.isBlank(schemaName))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Argument schemaName must not be blank");
 		
 		if(StringUtils.isBlank(tableName))
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Argument tableName must not be blank");
@@ -58,19 +54,18 @@ public class TableInfoQuery {
 		if(COLUMNS_QUERY == null)
 			COLUMNS_QUERY = Util.loadUtf8(COLUMNS_QUERY_FILE);
 		
-		this.dbClient = dbClient;		
-		this.schemaName = schemaName;
+		this.dbClient = dbClient;
 		this.tableName = tableName;
 	}
 	
 	private TableInfo queryTableInfo() {
 			
  		List<TableInfo> list = null;
- 		
+
 		list = dbClient.query(
-				TABLE_QUERY, 
-				new String[] {schemaName, tableName},
-				new BeanPropertyRowMapper<TableInfo>(TableInfo.class)
+				TABLE_QUERY,
+				new BeanPropertyRowMapper<TableInfo>(TableInfo.class),
+				tableName
 				);
 		
 		if(list == null || list.size() == 0)
@@ -89,9 +84,9 @@ public class TableInfoQuery {
  		List<FieldInfo> list = null;
  		
 		list = dbClient.query(
-				COLUMNS_QUERY, 
-				new String[] {schemaName, tableName},
-				new BeanPropertyRowMapper<FieldInfo>(FieldInfo.class)
+				COLUMNS_QUERY,
+				new BeanPropertyRowMapper<FieldInfo>(FieldInfo.class),
+				tableName
 				);
 		
 		return list;

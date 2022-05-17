@@ -35,7 +35,7 @@ public class DbConfig {
     	}
     }
     
-    public static class Datasource {
+    public static class Datasource implements Cloneable {
     	
         private String key;
         private String url;
@@ -91,5 +91,19 @@ public class DbConfig {
 			return "Datasource [key=" + key + ", url=" + url + ", user=" + user + ", pass=" + pass + "]";
 		}
 
+		@Override
+        public Object clone(){
+            return deepCopy();
+        }
+
+        public Datasource deepCopy(){
+            Datasource clone = new Datasource();
+            clone.setUrl(new String(this.getUrl()));
+            clone.setKey(new String(this.getKey()));
+            clone.setUser(new String(this.getUser()));
+            clone.setPass(new String(this.getPass()));
+
+            return clone;
+        }
     }
 }

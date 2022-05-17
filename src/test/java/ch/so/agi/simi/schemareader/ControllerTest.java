@@ -9,11 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -263,7 +259,6 @@ public class ControllerTest {
 		map.put("myuid", "uuid");
 		map.put("dateonly", "date");
 		map.put("datewithtime", "timestamp");
-		map.put("codedvalue", "fuu");
 		
 		int numFieldMatch = 0;
 		for(FieldInfo fi:tfi.getFields()) {
@@ -276,6 +271,31 @@ public class ControllerTest {
 		}
 		
 		assertEquals(map.size(), numFieldMatch, "Fieldnames in unittest and testdb do not match");
+	}
+
+	@Test
+	void enumTypes_areReturned() throws Exception {
+
+		MvcResult mvcResult = client.perform(get(INFO_URL, DB_IDENT_VALID1, "enums", "classwithenum")
+				.contentType("application/json"))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		TableAndFieldInfo tfi = mapTfiFromResult(mvcResult);
+
+		Set<String> set = new HashSet<>();
+		set.add("namedenum");
+		//set.add("inlineenum"); -- inline enums are not exposed - see https://github.com/claeis/ili2db/issues/469
+
+		int numFieldMatch = 0;
+		for(FieldInfo fi:tfi.getFields()) {
+			if (set.contains(fi.getName())) {
+				assertNotNull(fi.getIliEnumName());
+				numFieldMatch++;
+			}
+		}
+
+		assertEquals(set.size(), numFieldMatch, "Fieldnames in unittest and testdb do not match");
 	}
 	
 	@Test

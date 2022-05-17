@@ -1,6 +1,7 @@
 /*
-Fragt die notwendigen Informationen zu einer Tabelle oder View aus dem
+Fragt die notwendigen Informationen zu einer Tabelle oder View eines Schemas aus dem
 postgresql Katalog ab.
+Das Schema muss als Search-Path gesetzt sein.
 */
 
 with
@@ -67,7 +68,7 @@ select
 from 
 	table_view_all 
 where
-		schema_name = ? 
-	and 
 		tv_name = ?
+	and 
+		schema_name = trim(split_part(current_setting('search_path'), ',', 1)) -- Defensiv: Funktioniert, selbst wenn der Suchpfad mehrere Schmemanamen umfasst.
 ;
