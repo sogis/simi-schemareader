@@ -28,8 +28,8 @@ jobs:
 
     - name: docker login
       env:
-        SIMI_DOCKER_USER: ${{ secrets.SIMI_DOCKER_USER }}
-        SIMI_DOCKER_PASS: ${{ secrets.SIMI_DOCKER_PASS }}
-      run: echo "$SIMI_DOCKER_PASS" | docker login -u "$SIMI_DOCKER_USER" --password-stdin
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+      run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - name: Push image with Gradle
       run: ./gradlew pushImg
