@@ -186,23 +186,11 @@ Packages und deren Bedeutung
 * **ch.so.agi.schemareader.query:** Enthält den Code zur Abfrage des Postgresql-Kataloges - sprich die Business-Logik des Service. 
 * **ch.so.agi.schemareader.util:** Umfasst mehrfach verwendete statische Hilfsfunktionen.
 
-# Auslesen Aufzähltyp
+# Changelog
 
-## t_ili2db_column_prop V 4.7.0
+## V 2.0 (Änderungen gegenüber V 1.x)
 
-|tablename|subtype|columnname|tag|setting|
-|---------|-------|----------|---|-------|
-|attrtypes||charmax|ch.ehi.ili2db.textKind|MTEXT|
-|charlength||charmax|ch.ehi.ili2db.textKind|MTEXT|
-|attrtypes|attrtypes|codedvalue|ch.ehi.ili2db.enumDomain|SO_SrAttrTypes.TestEnum|
-|charlength||char255|ch.ehi.ili2db.textKind|MTEXT|
-|attrtypes||char255|ch.ehi.ili2db.textKind|MTEXT|
-
-## t_ili2db_column_prop V 4.3.1
-
-|tablename|subtype|columnname|tag|setting|
-|---------|-------|----------|---|-------|
-|attrtypes||charmax|ch.ehi.ili2db.textKind|MTEXT|
-|charlength||charmax|ch.ehi.ili2db.textKind|MTEXT|
-|charlength||char255|ch.ehi.ili2db.textKind|MTEXT|
-|attrtypes||char255|ch.ehi.ili2db.textKind|MTEXT|
+* Erweiterung der Response für Endpunkt http://localhost:8080/[key]/[schemaname]/[tablename]
+  * Rückgabe, ob für ein Attribut im ILI-Modell codierte Werte verwendet werden (Enumerationen).   
+    Damit kann der Schemareader neu **ausschliesslich ili2pg-Schemen auslesen**.
+  * Rückgabe, ob es sich bei der abgefragten Relation um eine Tabelle oder eine DB-View handelt.

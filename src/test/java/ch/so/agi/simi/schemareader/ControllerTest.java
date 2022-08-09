@@ -285,12 +285,12 @@ public class ControllerTest {
 
 		Set<String> set = new HashSet<>();
 		set.add("namedenum");
-		//set.add("inlineenum"); -- inline enums are not exposed - see https://github.com/claeis/ili2db/issues/469
+		set.add("inlineenum");
 
 		int numFieldMatch = 0;
 		for(FieldInfo fi:tfi.getFields()) {
 			if (set.contains(fi.getName())) {
-				assertNotNull(fi.getIliEnumName());
+				assertTrue(fi.isIliEnum(), "Attribut " + fi.getName() + " muss iliEnum=true zurückgeben");
 				numFieldMatch++;
 			}
 		}

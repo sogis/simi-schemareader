@@ -38,12 +38,12 @@ public class Controller {
     			@PathVariable String db,
 	    		@RequestParam(name = "schema", required = false) String schemaNameFragment,
 	    		@RequestParam(name = "table", required = false) String tableNameFragment
-    		){  
-    	  	
-  	   	JdbcTemplate dbClient = dbClients.getClient(db);
-    	TableListing res = TableListingQuery.queryTables(dbClient, schemaNameFragment, tableNameFragment);
-    	
-    	return res;
-    }
+    		) {
+
+		JdbcTemplate dbClient = dbClients.getClient(db);
+		TableListing res = TableListingQuery.queryTables(dbClient, schemaNameFragment, tableNameFragment);
+
+		return res;
+	}
 }
 

@@ -43,26 +43,20 @@ task copyJar(type: Copy, dependsOn: testJar){
 
 task buildImage(type:Exec, dependsOn: copyJar) {
 	def githash = getCheckedOutGitCommitHash()
-	def buildident = getVersion()
+	def version = getVersion(true)
+	def shortVersion = getVersion(false)
 	def build_timestamp = getTimestamp()
 
  	workingDir "$projectDir/docker/image"
  	commandLine 'docker', 'build',
 				'--no-cache', '--force-rm',
-				'-t', "sogis/simi_schemareader:$buildident",
+				'-t', "sogis/simi_schemareader:$version",
+				'-t', "sogis/simi_schemareader:$shortVersion",
+				'-t', "sogis/simi_schemareader:latest",
 				'--label', "simi_schemareader.created=$build_timestamp", 
 				'--label', "simi_schemareader.git_commit=$githash",
-				'--label', "simi_schemareader.version=$buildident",
+				'--label', "simi_schemareader.version=$version",
 				'-f', 'Dockerfile',  '.'
-}
-
-
-task tagImage(type:Exec, dependsOn: buildImage) {
-	def buildident = getVersion()
-	
- 	commandLine 'docker', 'tag', 
-				"sogis/simi_schemareader:$buildident",
-				"sogis/simi_schemareader:latest"
 }
 
 task imgDown(type:Exec) {
@@ -86,9 +80,9 @@ task imgUp(type:Exec){
 task imgTest{
 
 	dependsOn imgUp
-	dependsOn tagImage
+	dependsOn buildImage
 	
-	imgUp.mustRunAfter tagImage
+	imgUp.mustRunAfter buildImage
 	
  	doLast { 	
         def resp = new java.net.URL("http://localhost:8080/postgis?schema=public").text
@@ -97,17 +91,18 @@ task imgTest{
         	throw new java.lang.RuntimeException("Can't execute get on docker image") 
     }
 }
-task pushImgLatest(type:Exec) {
-	commandLine 'docker', 'push', "sogis/simi_schemareader:latest"
+
+task pushImg(type:Exec) {
+	commandLine 'docker', 'image', 'push', '--all-tags', "sogis/simi_schemareader"
 }
 
-task pushImg(type:Exec, dependsOn: pushImgLatest) {
-	def version = getVersion()
-	commandLine 'docker', 'push', "sogis/simi_schemareader:$version"
-}
+String getVersion(boolean useFullVersion){
+	String version = "2.0"
 
-String getVersion(){
-	return "1.1." + getBuildNumber()
+	if(useFullVersion)
+		version = version + "." + getBuildNumber()
+
+	return version
 }
 
 String getBuildNumber() {

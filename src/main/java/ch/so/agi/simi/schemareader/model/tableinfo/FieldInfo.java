@@ -16,7 +16,7 @@ public class FieldInfo {
 	@NotBlank
 	private String type;
 
-	private String iliEnumName;
+	private boolean iliEnum;
 	
 	private Integer length;
 	
@@ -80,11 +80,11 @@ public class FieldInfo {
 		this.geoFieldSrId = geoFieldSrId;
 	}
 
-	public String getIliEnumName() {
-		return iliEnumName;
+	public boolean isIliEnum() {
+		return iliEnum;
 	}
 
-	public void setIliEnumName(String iliEnumName) {
-		this.iliEnumName = iliEnumName;
+	public void setIliEnum(boolean iliEnum) {
+		this.iliEnum = iliEnum;
 	}
 }

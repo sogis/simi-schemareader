@@ -9,12 +9,13 @@ WITH
 ili_enums AS (
   SELECT
     tablename,
-    columnname,
-    setting AS ili_enum_name
+    columnname
   FROM
     t_ili2db_column_prop
   WHERE
-    tag = 'ch.ehi.ili2db.enumDomain'
+      tag = 'ch.ehi.ili2db.typeKind'
+    AND
+      setting = 'ENUM'
 ),
 
 att_base AS (
@@ -27,7 +28,7 @@ att_base AS (
     attnotnull AS att_mandatory,
     typname AS att_typ,
     NULLIF(information_schema._pg_char_max_length(atttypid, atttypmod), -1) AS att_length,
-    ie.ili_enum_name AS att_ili_enum_name
+    (ie.columnname IS NOT NULL) AS att_ili_enum
   FROM
     pg_namespace
   JOIN
@@ -79,7 +80,7 @@ att_all AS (
     att_typ as type,
     att_length as length,
     att_desc as description,
-    att_ili_enum_name AS ili_enum_name,
+    att_ili_enum AS ili_enum,
     geo_col_type as geo_field_type,
     geo_col_sr_id as geo_field_sr_id,
     geo_col_sr_org as geo_field_sr_org

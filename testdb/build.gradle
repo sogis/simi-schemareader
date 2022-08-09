@@ -1,7 +1,14 @@
 plugins {
   id "de.undercouch.download" version "4.1.1"
 }
-def ili2pgVersion = "4.7.0"
+/*
+def ili2pgVersion = "4.3.1"
+def binDistZipName = "ili2pg-4.3.1-bindist.zip"
+ */
+
+def ili2pgVersion = "4.8.1-SNAPSHOT"
+def binDistZipName = "ili2pg-4.8.1-20220808.130127-5-bindist.zip" // temporär für 4.8.1 Snapshot Dateiname der bindist hat vieleicht geändert (Version Datumsstempel etc. beigefügt
+
 
 def schemaBase = [
 	"java", "-jar", "$buildDir/ili2pg/ili2pg-" + ili2pgVersion + ".jar",
@@ -27,12 +34,12 @@ task dbStart(type:Exec) { //empty db
 }
 
 task fetchIli2pg(type: Download) {
-    src "http://jars.interlis.ch/ch/interlis/ili2pg/" + ili2pgVersion + "/ili2pg-" + ili2pgVersion + "-bindist.zip"
+	src "http://jars.interlis.ch/ch/interlis/ili2pg/" + ili2pgVersion + "/" + binDistZipName
     dest buildDir
 }
 
 task unzipIli2pg(dependsOn: fetchIli2pg, type: Copy) {
-    from zipTree("$buildDir/ili2pg-" + ili2pgVersion + "-bindist.zip")
+    from zipTree("$buildDir/" + binDistZipName)
     into "$buildDir/ili2pg"
 }
 
